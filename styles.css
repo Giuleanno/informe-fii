@@ -912,6 +912,21 @@ h1, h2, h3, h4 {
   margin: 0;
 }
 
+.servicios__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.servicios__card {
+  gap: 0.5rem;
+}
+
+.servicios__card .tile__title {
+  font-size: 1.05rem;
+}
+
 /* ---------- 13. ALIADOS INSTITUCIONALES ----------
    Fichas siempre blancas, igual que el cintillo: los logos de las instituciones
    aliadas traen su propio texto oscuro y no son "conscientes" del tema del sitio. */
@@ -1243,6 +1258,10 @@ h1, h2, h3, h4 {
     grid-column: span 2;
   }
 
+  .servicios__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .noticia {
     flex: 0 0 calc(50% - (var(--space-md) / 2));
   }
@@ -1386,8 +1405,8 @@ h1, h2, h3, h4 {
   .bento {
     grid-template-columns: repeat(6, 1fr);
     grid-template-areas:
-      'feature feature feature mecanica  mecanica  materiales'
-      'feature feature feature geomatica geomatica sistemas';
+      'feature feature feature mecanica  mecanica materiales'
+      'feature feature feature geomatica sistemas labmeb';
   }
 
   .tile--feature { grid-area: feature; }
@@ -1395,6 +1414,7 @@ h1, h2, h3, h4 {
   .tile--materiales { grid-area: materiales; }
   .tile--geomatica { grid-area: geomatica; }
   .tile--sistemas { grid-area: sistemas; }
+  .tile--labmeb { grid-area: labmeb; }
 
   .noticia {
     flex: 0 0 calc(33.333% - (var(--space-md) * 2 / 3));
