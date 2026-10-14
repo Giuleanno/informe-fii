@@ -109,14 +109,17 @@ button:focus-visible,
   --header-glass: rgba(10, 10, 13, 0.55);
   --header-glass-scrolled: rgba(10, 10, 13, 0.88);
 
+  /* Calibración óptica del Hero (ajustable según la foto de fondo) */
+  --hero-brightness: 0.82;
+  --hero-contrast: 1.06;
+  --hero-grayscale: 0.2;
+
   /* Sombras */
   --shadow-md: 0 20px 48px -16px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 28px 64px -20px rgba(0, 0, 0, 0.6);
 
   /* Tipografía — una sola familia (IBM Plex) en tres roles ópticos: Sans para
-     títulos y cuerpo, Mono para etiquetas/datos. IBM Plex se diseñó para dar
-     a una empresa de ingeniería una cara seria pero no fría — mejor calce
-     institucional que la Bricolage Grotesque/Inter que traía antes. */
+     títulos y cuerpo, Mono para etiquetas/datos. */
   --font-display: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-base: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
@@ -136,13 +139,7 @@ button:focus-visible,
   --radius-md: 16px;
   --header-height: 84px;
 
-  /* ---------- Sistema de motion ----------
-     Mismo criterio que el resto de los tokens: cada página nueva del menú
-     (Biblioteca, Semillero, FORMATEC...) reutiliza estas duraciones/curvas en
-     vez de inventar timings sueltos. Duración y curva van por separado para
-     poder combinarlas libremente; "ease" y "linear" se usan literales porque
-     son palabras clave estándar, no necesitan alias. */
-
+  /* ---------- Sistema de motion ---------- */
   /* Duraciones — de más rápida a más lenta */
   --dur-micro: 0.2s;   /* micro-feedback: skip link */
   --dur-ui: 0.3s;      /* default de UI: hover de botones, bordes, colores */
@@ -153,13 +150,12 @@ button:focus-visible,
   --dur-hero: 0.8s;    /* animación de marca: ícono del precargador */
 
   /* Curvas con nombre — solo las que no son "ease"/"linear" */
-  --ease-swift: cubic-bezier(0.7, 0, 0.2, 1);       /* entra/sale rápido y decidido: precargador, menú */
+  --ease-swift: cubic-bezier(0.7, 0, 0.2, 1);        /* entra/sale rápido y decidido: precargador, menú */
   --ease-spring: cubic-bezier(0.34, 1.18, 0.64, 1); /* retorno con leve rebote: botones magnéticos */
-  --ease-decel: cubic-bezier(0.2, 0.8, 0.2, 1);     /* desaceleración marcada: ícono del precargador, tarjetas */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* aparición en scroll */
+  --ease-decel: cubic-bezier(0.2, 0.8, 0.2, 1);      /* desaceleración marcada: ícono del precargador, tarjetas */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);    /* aparición en scroll */
 
-  /* Alias compuestos — se mantienen por compatibilidad con `var(--transition-base)`
-     ya usado en todo el CSS; ahora derivan de los tokens atómicos de arriba. */
+  /* Alias compuestos */
   --transition-base: var(--dur-ui) ease;
   --transition-spring: var(--dur-spring) var(--ease-spring);
 }
@@ -172,8 +168,6 @@ button:focus-visible,
   --color-surface: #ffffff;
   --color-surface-2: #fbfaf6;
   --color-line: #e3e0d8;
-  /* #8a8570 en vez de #c9c4b8: el valor anterior daba ~1.6:1 contra el fondo/superficie,
-     muy por debajo del 3:1 exigido para bordes de botones/controles. */
   --color-line-strong: #8a8570;
 
   --color-paper: #17171b;
@@ -314,9 +308,7 @@ h1, h2, h3, h4 {
   color: var(--color-accent-hover);
 }
 
-/* Botones magnéticos: la curva vive aquí, no en el JS — main.js solo calcula la
-   posición y activa/quita .is-tracking; así el "sentir" del rebote se ajusta en
-   un solo lugar sin tocar el script. */
+/* Botones magnéticos */
 .btn--magnetic {
   transition: transform var(--transition-spring);
 }
@@ -325,9 +317,7 @@ h1, h2, h3, h4 {
   transition: none;
 }
 
-/* ---------- 5. CINTILLO INSTITUCIONAL ----------
-   Masthead de identidad de gobierno: fondo blanco fijo en ambos temas
-   (el texto de la imagen está fijado en azul oscuro sobre blanco). */
+/* ---------- 5. CINTILLO INSTITUCIONAL ---------- */
 .cintillo {
   background-color: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -361,8 +351,6 @@ h1, h2, h3, h4 {
   opacity: 0.4;
 }
 
-/* La marca entra y se queda quieta (antes giraba sin parar) — un giro continuo lee
-   como "cargando" de app; quedarse fija transmite más aplomo institucional. */
 .preloader__icon {
   width: 84px;
   height: 84px;
@@ -403,11 +391,6 @@ h1, h2, h3, h4 {
   border-bottom: 1px solid var(--color-line);
 }
 
-/* El cristal vive en ::before (no en .header directamente): "backdrop-filter" en un
-   ancestro convierte a ese ancestro en el "containing block" de cualquier descendiente
-   position:fixed (como el menú de pantalla completa en mobile) — su top/left dejarían de
-   ser relativos al viewport. Un pseudo-elemento no es ancestro de esos descendientes, así
-   que aporta el mismo cristal sin heredar ese problema. */
 .header::before {
   content: '';
   position: absolute;
@@ -508,12 +491,7 @@ h1, h2, h3, h4 {
   transform: translateY(-6.5px) rotate(-45deg);
 }
 
-/* Menú — overlay de pantalla completa en mobile.
-   Usa top/left + width/height en vh en vez de "inset: 0": el header es
-   position:sticky, y un ancestro posicionado convierte el 0/0/0/0 de
-   "inset" en la caja de contención de este fixed — con altura de
-   contenido (auto) en vez de la del viewport. width/height en vw/vh
-   son valores absolutos, así que no dependen de esa caja de contención. */
+/* Menú — overlay de pantalla completa en mobile */
 .header__nav {
   position: fixed;
   top: 0;
@@ -534,8 +512,6 @@ h1, h2, h3, h4 {
   transition: transform var(--dur-panel) var(--ease-swift), visibility 0s linear var(--dur-panel);
 }
 
-/* visibility:hidden además del transform: mientras está cerrado, sus enlaces no deben
-   quedar alcanzables con Tab (estaban fuera de pantalla pero seguían enfocables). */
 .header__nav--open {
   visibility: visible;
   transition: transform var(--dur-panel) var(--ease-swift);
@@ -582,7 +558,7 @@ h1, h2, h3, h4 {
   display: none;
 }
 
-/* ---------- 8. HERO ---------- */
+/* ---------- 8. HERO (OPTIMIZADO PARA MAYOR CLARIDAD DE IMAGEN) ---------- */
 .hero {
   position: relative;
   overflow: hidden;
@@ -595,7 +571,9 @@ h1, h2, h3, h4 {
   background-image: url('assets/hero-banner.webp');
   background-size: cover;
   background-position: center 32%;
-  filter: grayscale(1) contrast(1.15) brightness(0.42);
+  /* Imagen mucho más luminosa (0.82 vs 0.42 anterior) y con color natural
+     parcialmente preservado (grayscale 0.2) para destacar la fotografía */
+  filter: grayscale(var(--hero-grayscale)) contrast(var(--hero-contrast)) brightness(var(--hero-brightness));
   transform: translate3d(0, 0, 0) scale(1.08);
   will-change: transform;
 }
@@ -603,16 +581,19 @@ h1, h2, h3, h4 {
 .hero__wash {
   position: absolute;
   inset: 0;
-  /* Siempre se funde a #0a0a0d fijo (no var(--color-bg)): el hero se queda oscuro en
-     ambos temas, así que su base no puede aclararse con el fondo del tema claro. */
-  background: linear-gradient(180deg, rgba(10, 10, 13, 0.35) 0%, rgba(10, 10, 13, 0.55) 45%, #0a0a0d 100%),
-    linear-gradient(100deg, rgba(227, 28, 35, 0.18), rgba(112, 149, 184, 0.12) 60%);
+  /* Scrim direccional: despeja el centro y la derecha para lucir la imagen de fondo,
+     concentrando un sombreado suave solo detrás del texto y en el borde inferior
+     para mantener legibilidad AA en ambos temas (oscuro y claro). */
+  background:
+    linear-gradient(180deg, rgba(10, 10, 13, 0.10) 0%, rgba(10, 10, 13, 0.25) 62%, rgba(10, 10, 13, 0.82) 100%),
+    linear-gradient(90deg, rgba(10, 10, 13, 0.50) 0%, rgba(10, 10, 13, 0.20) 55%, rgba(10, 10, 13, 0.04) 100%),
+    linear-gradient(100deg, rgba(227, 28, 35, 0.10), rgba(112, 149, 184, 0.08) 60%);
 }
 
 .hero__grid {
   position: absolute;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.25;
   background-image: linear-gradient(var(--color-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
   background-size: 42px 42px;
@@ -620,9 +601,6 @@ h1, h2, h3, h4 {
   mask-image: radial-gradient(ellipse at 30% 20%, #000 0%, transparent 70%);
 }
 
-/* El hero conserva su tratamiento fotográfico oscuro en ambos temas (patrón habitual en
-   heroes con imagen), por eso su texto usa colores fijos en vez de los tokens de tema —
-   de lo contrario el modo claro dejaría texto oscuro sobre la foto oscura, ilegible. */
 .hero__coord {
   position: absolute;
   z-index: 2;
@@ -632,9 +610,10 @@ h1, h2, h3, h4 {
   font-size: 0.68rem;
   letter-spacing: 0.05em;
   line-height: 1.6;
-  color: #b9b7ae;
+  color: #f3f1ea;
   text-align: right;
-  opacity: 0.8;
+  opacity: 0.9;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
 }
 
 .hero__container {
@@ -649,18 +628,19 @@ h1, h2, h3, h4 {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ff4b4e;
+  color: #ff5a5d;
   margin-bottom: var(--space-sm);
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.75);
 }
 
 .hero__eyebrow::before {
   content: '';
   width: 22px;
   height: 1px;
-  background-color: #e31c23;
+  background-color: #ff4b4e;
 }
 
 .hero__title {
@@ -668,6 +648,7 @@ h1, h2, h3, h4 {
   font-size: clamp(2.4rem, 6.4vw + 0.2rem, 5.2rem);
   line-height: 0.98;
   margin-bottom: var(--space-md);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
 }
 
 .hero__title em {
@@ -676,10 +657,11 @@ h1, h2, h3, h4 {
 }
 
 .hero__subtitle {
-  color: #b9b7ae;
+  color: #e4e2da;
   font-size: clamp(1rem, 1.6vw, 1.15rem);
   max-width: 46ch;
   margin-bottom: var(--space-lg);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
 }
 
 .hero__actions {
@@ -690,12 +672,16 @@ h1, h2, h3, h4 {
 
 .hero .btn--outline {
   color: #f3f1ea;
-  border-color: rgba(243, 241, 234, 0.4);
+  border-color: rgba(243, 241, 234, 0.55);
+  background-color: rgba(10, 10, 13, 0.38);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero .btn--outline:hover {
   color: #ff4b4e;
   border-color: #e31c23;
+  background-color: rgba(10, 10, 13, 0.62);
 }
 
 /* ---------- 9. STATS ---------- */
@@ -927,9 +913,7 @@ h1, h2, h3, h4 {
   font-size: 1.05rem;
 }
 
-/* ---------- 13. ALIADOS INSTITUCIONALES ----------
-   Fichas siempre blancas, igual que el cintillo: los logos de las instituciones
-   aliadas traen su propio texto oscuro y no son "conscientes" del tema del sitio. */
+/* ---------- 13. ALIADOS INSTITUCIONALES ---------- */
 .aliados {
   border-bottom: 1px solid var(--color-line);
 }
@@ -1237,10 +1221,10 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================================
-   15. MEDIA QUERIES — Mobile-first
+   17. MEDIA QUERIES — Mobile-first
    ============================================================ */
 
-/* Tablet (>= 768px) */
+/* Tablet (768px en adelante) */
 @media (min-width: 768px) {
   .stats__container {
     grid-template-columns: repeat(4, 1fr);
@@ -1271,7 +1255,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* Desktop (>= 1024px) */
+/* Desktop (1024px en adelante) */
 @media (min-width: 1024px) {
   .header__toggle {
     display: none;
