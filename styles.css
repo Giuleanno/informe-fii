@@ -84,14 +84,16 @@ button:focus-visible,
   --color-surface: #111116;
   --color-surface-2: #18181f;
   --color-line: #27272f;
-  /* Cumple 3:1 de contraste WCAG 1.4.11 para bordes de controles e inputs */
+  /* #63636d en vez de #38383f: el valor anterior solo llegaba a ~1.7:1 contra el fondo,
+     por debajo del 3:1 que exige WCAG 1.4.11 para bordes de botones/controles. */
   --color-line-strong: #63636d;
 
   --color-paper: #f3f1ea;
   --color-text: #f3f1ea;
   --color-text-muted: #9a99a3;
 
-  /* Rojo institucional calibrado para cumplir 4.5:1 AA con texto claro */
+  /* #d4181e en vez de #e31c23: el rojo original daba 4.17:1 con el texto claro de los
+     botones, por debajo del 4.5:1 que exige AA para texto normal. Ajuste casi imperceptible. */
   --color-accent: #d4181e;
   --color-accent-hover: #ff4b4e;
   --color-accent-dim: #3a0e10;
@@ -99,23 +101,22 @@ button:focus-visible,
   --color-steel: #7095b8;
   --color-steel-dim: #1c2833;
 
+  /* Texto/iconos siempre claros sobre superficies de color acento (botones, hover rojo) —
+     no se redefine en modo claro: el rojo institucional sigue necesitando texto claro encima. */
   --color-on-accent: #f3f1ea;
 
   /* Cabecera de cristal */
   --header-glass: rgba(10, 10, 13, 0.55);
   --header-glass-scrolled: rgba(10, 10, 13, 0.88);
 
-  /* Calibración óptica del Hero: 100% a color natural, nítido y luminoso */
-  --hero-grayscale: 0;
-  --hero-brightness: 0.96;
-  --hero-contrast: 1.04;
-  --hero-saturate: 1.06;
-
   /* Sombras */
   --shadow-md: 0 20px 48px -16px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 28px 64px -20px rgba(0, 0, 0, 0.6);
 
-  /* Tipografía */
+  /* Tipografía — una sola familia (IBM Plex) en tres roles ópticos: Sans para
+     títulos y cuerpo, Mono para etiquetas/datos. IBM Plex se diseñó para dar
+     a una empresa de ingeniería una cara seria pero no fría — mejor calce
+     institucional que la Bricolage Grotesque/Inter que traía antes. */
   --font-display: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-base: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
@@ -135,31 +136,44 @@ button:focus-visible,
   --radius-md: 16px;
   --header-height: 84px;
 
-  /* Sistema de motion */
-  --dur-micro: 0.2s;
-  --dur-ui: 0.3s;
-  --dur-panel: 0.45s;
-  --dur-spring: 0.5s;
-  --dur-curtain: 0.6s;
-  --dur-reveal: 0.7s;
-  --dur-hero: 0.8s;
+  /* ---------- Sistema de motion ----------
+     Mismo criterio que el resto de los tokens: cada página nueva del menú
+     (Biblioteca, Semillero, FORMATEC...) reutiliza estas duraciones/curvas en
+     vez de inventar timings sueltos. Duración y curva van por separado para
+     poder combinarlas libremente; "ease" y "linear" se usan literales porque
+     son palabras clave estándar, no necesitan alias. */
 
-  --ease-swift: cubic-bezier(0.7, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.18, 0.64, 1);
-  --ease-decel: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Duraciones — de más rápida a más lenta */
+  --dur-micro: 0.2s;   /* micro-feedback: skip link */
+  --dur-ui: 0.3s;      /* default de UI: hover de botones, bordes, colores */
+  --dur-panel: 0.45s;  /* paneles/menús que se deslizan: nav mobile */
+  --dur-spring: 0.5s;  /* retorno elástico: botones magnéticos */
+  --dur-curtain: 0.6s; /* cortinas grandes: precargador */
+  --dur-reveal: 0.7s;  /* aparición en scroll */
+  --dur-hero: 0.8s;    /* animación de marca: ícono del precargador */
 
+  /* Curvas con nombre — solo las que no son "ease"/"linear" */
+  --ease-swift: cubic-bezier(0.7, 0, 0.2, 1);       /* entra/sale rápido y decidido: precargador, menú */
+  --ease-spring: cubic-bezier(0.34, 1.18, 0.64, 1); /* retorno con leve rebote: botones magnéticos */
+  --ease-decel: cubic-bezier(0.2, 0.8, 0.2, 1);     /* desaceleración marcada: ícono del precargador, tarjetas */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* aparición en scroll */
+
+  /* Alias compuestos — se mantienen por compatibilidad con `var(--transition-base)`
+     ya usado en todo el CSS; ahora derivan de los tokens atómicos de arriba. */
   --transition-base: var(--dur-ui) ease;
   --transition-spring: var(--dur-spring) var(--ease-spring);
 }
 
-/* Tema claro */
+/* Tema claro — mismo sistema de tokens, mismo acento rojo; se activa con el botón del header
+   (persistido en localStorage) escribiendo data-theme="light" en <html>. */
 :root[data-theme='light'] {
   color-scheme: light;
   --color-bg: #f5f3ee;
   --color-surface: #ffffff;
   --color-surface-2: #fbfaf6;
   --color-line: #e3e0d8;
+  /* #8a8570 en vez de #c9c4b8: el valor anterior daba ~1.6:1 contra el fondo/superficie,
+     muy por debajo del 3:1 exigido para bordes de botones/controles. */
   --color-line-strong: #8a8570;
 
   --color-paper: #17171b;
@@ -225,7 +239,6 @@ h1, h2, h3, h4 {
 
 .section__eyebrow--center {
   justify-content: center;
-  width: 100%;
 }
 
 .section__eyebrow--center::before {
@@ -242,7 +255,7 @@ h1, h2, h3, h4 {
 }
 
 .section__subtitle {
-  max-width: 660px;
+  max-width: 640px;
   color: var(--color-text-muted);
   font-size: 1.05rem;
   margin: 0 auto var(--space-xl);
@@ -268,7 +281,7 @@ h1, h2, h3, h4 {
   border: 1px solid transparent;
   white-space: nowrap;
   transition: background-color var(--transition-base), border-color var(--transition-base),
-    color var(--transition-base), box-shadow var(--transition-base);
+    color var(--transition-base);
 }
 
 .btn--primary {
@@ -301,6 +314,9 @@ h1, h2, h3, h4 {
   color: var(--color-accent-hover);
 }
 
+/* Botones magnéticos: la curva vive aquí, no en el JS — main.js solo calcula la
+   posición y activa/quita .is-tracking; así el "sentir" del rebote se ajusta en
+   un solo lugar sin tocar el script. */
 .btn--magnetic {
   transition: transform var(--transition-spring);
 }
@@ -309,7 +325,9 @@ h1, h2, h3, h4 {
   transition: none;
 }
 
-/* ---------- 5. CINTILLO INSTITUCIONAL ---------- */
+/* ---------- 5. CINTILLO INSTITUCIONAL ----------
+   Masthead de identidad de gobierno: fondo blanco fijo en ambos temas
+   (el texto de la imagen está fijado en azul oscuro sobre blanco). */
 .cintillo {
   background-color: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -343,6 +361,8 @@ h1, h2, h3, h4 {
   opacity: 0.4;
 }
 
+/* La marca entra y se queda quieta (antes giraba sin parar) — un giro continuo lee
+   como "cargando" de app; quedarse fija transmite más aplomo institucional. */
 .preloader__icon {
   width: 84px;
   height: 84px;
@@ -383,6 +403,11 @@ h1, h2, h3, h4 {
   border-bottom: 1px solid var(--color-line);
 }
 
+/* El cristal vive en ::before (no en .header directamente): "backdrop-filter" en un
+   ancestro convierte a ese ancestro en el "containing block" de cualquier descendiente
+   position:fixed (como el menú de pantalla completa en mobile) — su top/left dejarían de
+   ser relativos al viewport. Un pseudo-elemento no es ancestro de esos descendientes, así
+   que aporta el mismo cristal sin heredar ese problema. */
 .header::before {
   content: '';
   position: absolute;
@@ -483,6 +508,12 @@ h1, h2, h3, h4 {
   transform: translateY(-6.5px) rotate(-45deg);
 }
 
+/* Menú — overlay de pantalla completa en mobile.
+   Usa top/left + width/height en vh en vez de "inset: 0": el header es
+   position:sticky, y un ancestro posicionado convierte el 0/0/0/0 de
+   "inset" en la caja de contención de este fixed — con altura de
+   contenido (auto) en vez de la del viewport. width/height en vw/vh
+   son valores absolutos, así que no dependen de esa caja de contención. */
 .header__nav {
   position: fixed;
   top: 0;
@@ -503,6 +534,8 @@ h1, h2, h3, h4 {
   transition: transform var(--dur-panel) var(--ease-swift), visibility 0s linear var(--dur-panel);
 }
 
+/* visibility:hidden además del transform: mientras está cerrado, sus enlaces no deben
+   quedar alcanzables con Tab (estaban fuera de pantalla pero seguían enfocables). */
 .header__nav--open {
   visibility: visible;
   transition: transform var(--dur-panel) var(--ease-swift);
@@ -549,100 +582,80 @@ h1, h2, h3, h4 {
   display: none;
 }
 
-/* ---------- 8. HERO (IMAGEN 100% A COLOR + CÁPSULA EDITORIAL ACCESIBLE) ---------- */
+/* ---------- 8. HERO ---------- */
 .hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(3rem, 8vw, 5.5rem) var(--gutter) clamp(3.5rem, 8vw, 5.5rem);
-  min-height: clamp(500px, 72vh, 680px);
-  display: flex;
-  align-items: center;
+  padding: clamp(3rem, 9vw, 6rem) var(--gutter) clamp(3.5rem, 8vw, 5.5rem);
 }
 
 .hero__bg {
   position: absolute;
   inset: -6% -2% -2% -2%;
-  background-image: url('assets/hero-banner.webp');
+  /* Versión a color sin el texto incrustado del arte original (que competía con el
+     titular HTML) y con la mitad izquierda desenfocada para dar fondo limpio al texto. */
+  background-image: url('assets/hero-banner-color.webp');
   background-size: cover;
-  background-position: center 32%;
-  /* Imagen 100% a color (--hero-grayscale: 0) y con brillo natural */
-  filter: grayscale(var(--hero-grayscale)) contrast(var(--hero-contrast))
-    brightness(var(--hero-brightness)) saturate(var(--hero-saturate));
-  transform: translate3d(0, 0, 0) scale(1.06);
+  /* Móvil: se encuadra a la persona, que queda detrás del texto bajo el velo uniforme. */
+  background-position: 72% 30%;
+  filter: saturate(1.05) brightness(0.92);
+  transform: translate3d(0, 0, 0) scale(1.08);
   will-change: transform;
 }
 
 .hero__wash {
   position: absolute;
   inset: 0;
-  /* Velo direccional sutil: deja despejado el color de la fotografía y solo
-     suaviza el borde izquierdo y la base para integrar el banner con el resto de la página */
-  background:
-    linear-gradient(90deg, rgba(10, 10, 14, 0.52) 0%, rgba(10, 10, 14, 0.18) 52%, rgba(10, 10, 14, 0.02) 100%),
-    linear-gradient(180deg, rgba(10, 10, 14, 0.08) 0%, rgba(10, 10, 14, 0.12) 70%, rgba(10, 10, 14, 0.65) 100%);
+  /* Siempre se funde a #0a0a0d fijo (no var(--color-bg)): el hero se queda oscuro en
+     ambos temas, así que su base no puede aclararse con el fondo del tema claro.
+     Móvil: el texto ocupa todo el ancho, así que el velo es uniforme. */
+  background: linear-gradient(180deg, rgba(10, 10, 13, 0.55) 0%, rgba(10, 10, 13, 0.62) 55%, #0a0a0d 100%);
 }
 
 .hero__grid {
   position: absolute;
   inset: 0;
-  opacity: 0.18;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  opacity: 0.35;
+  background-image: linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
   background-size: 42px 42px;
-  -webkit-mask-image: radial-gradient(ellipse at 25% 30%, #000 0%, transparent 65%);
-  mask-image: radial-gradient(ellipse at 25% 30%, #000 0%, transparent 65%);
+  /* Acotada a la zona oscura del texto: sobre el cielo claro de la foto a color se veía como ruido. */
+  -webkit-mask-image: radial-gradient(ellipse 45% 70% at 20% 30%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(ellipse 45% 70% at 20% 30%, #000 0%, transparent 100%);
 }
 
-/* Pastilla de coordenadas protegida con fondo translúcido para contrastar sobre cielo/fondos claros */
+/* El hero conserva su tratamiento fotográfico oscuro en ambos temas (patrón habitual en
+   heroes con imagen), por eso su texto usa colores fijos en vez de los tokens de tema —
+   de lo contrario el modo claro dejaría texto oscuro sobre la foto oscura, ilegible. */
 .hero__coord {
   position: absolute;
-  z-index: 3;
-  top: clamp(1.2rem, 3.5vw, 2.2rem);
+  z-index: 2;
+  top: clamp(1.5rem, 4vw, 2.5rem);
   right: var(--gutter);
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  line-height: 1.5;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
   color: #f3f1ea;
   text-align: right;
-  background-color: rgba(10, 11, 16, 0.68);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(243, 241, 234, 0.18);
-  padding: 0.45rem 0.85rem;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  opacity: 0.9;
+  /* Va sobre el cielo claro de la foto: la sombra mantiene el contraste. */
+  text-shadow: 0 1px 2px rgba(10, 10, 13, 0.8), 0 0 10px rgba(10, 10, 13, 0.55);
 }
 
 .hero__container {
   position: relative;
   z-index: 2;
-  width: 100%;
-  max-width: var(--container-width);
+  max-width: 760px;
   margin: 0 auto;
-}
-
-/* Cápsula editorial Blueprint Glass:
-   Garantiza contraste WCAG AAA (>11:1) para el texto sin tapar ni apagar el color de la foto */
-.hero__card {
-  max-width: 650px;
-  background-color: rgba(10, 11, 16, 0.68);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(243, 241, 234, 0.16);
-  border-left: 3px solid #eb2429;
-  border-radius: var(--radius-md);
-  padding: clamp(1.6rem, 4vw, 2.75rem);
-  box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.5);
 }
 
 .hero__eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ff6b6e;
+  color: #ff4b4e;
   margin-bottom: var(--space-sm);
   display: inline-flex;
   align-items: center;
@@ -653,25 +666,27 @@ h1, h2, h3, h4 {
   content: '';
   width: 22px;
   height: 1px;
-  background-color: #ff6b6e;
+  background-color: #e31c23;
 }
 
 .hero__title {
   color: #f3f1ea;
-  font-size: clamp(2.3rem, 5.6vw, 4.6rem);
-  line-height: 1.02;
+  text-shadow: 0 2px 24px rgba(10, 10, 13, 0.45);
+  font-size: clamp(2.4rem, 6.4vw + 0.2rem, 5.2rem);
+  line-height: 0.98;
   margin-bottom: var(--space-md);
 }
 
 .hero__title em {
-  color: #ff5c5f;
+  color: #ff4b4e;
   font-style: normal;
 }
 
 .hero__subtitle {
-  color: #e6e4dc;
-  font-size: clamp(1rem, 1.4vw, 1.12rem);
-  max-width: 48ch;
+  color: #dcdad2;
+  text-shadow: 0 1px 12px rgba(10, 10, 13, 0.6);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  max-width: 46ch;
   margin-bottom: var(--space-lg);
 }
 
@@ -681,26 +696,14 @@ h1, h2, h3, h4 {
   gap: var(--space-sm);
 }
 
-.hero .btn--primary {
-  background-color: #d4181e;
-  color: #ffffff;
-  box-shadow: 0 10px 24px -6px rgba(212, 24, 30, 0.55);
-}
-
-.hero .btn--primary:hover {
-  background-color: #eb2429;
-}
-
 .hero .btn--outline {
   color: #f3f1ea;
-  border-color: rgba(243, 241, 234, 0.55);
-  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(243, 241, 234, 0.4);
 }
 
 .hero .btn--outline:hover {
-  color: #ffffff;
-  border-color: #ff5c5f;
-  background-color: rgba(212, 24, 30, 0.25);
+  color: #ff4b4e;
+  border-color: #e31c23;
 }
 
 /* ---------- 9. STATS ---------- */
@@ -932,7 +935,9 @@ h1, h2, h3, h4 {
   font-size: 1.05rem;
 }
 
-/* ---------- 13. ENTES ADSCRITOS AL MINCYT Y ALIADOS ---------- */
+/* ---------- 13. ALIADOS INSTITUCIONALES ----------
+   Fichas siempre blancas, igual que el cintillo: los logos de las instituciones
+   aliadas traen su propio texto oscuro y no son "conscientes" del tema del sitio. */
 .aliados {
   border-bottom: 1px solid var(--color-line);
 }
@@ -942,37 +947,37 @@ h1, h2, h3, h4 {
   margin: 0 auto;
 }
 
-/* Nivel 1: Tarjetas con logotipos oficiales */
 .aliados__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(156px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
-  margin-bottom: var(--space-xl);
 }
 
 .aliados__item {
-  background-color: var(--color-surface);
+  width: 152px;
+  height: 96px;
+  flex-shrink: 0;
+  background-color: #ffffff;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  padding: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.65rem;
-  transition: transform var(--dur-ui) var(--ease-decel),
-    box-shadow var(--dur-ui) ease,
-    border-color var(--dur-ui) ease;
-}
-
-/* Contenedor de logo siempre blanco para preservar el contraste original de las marcas */
-.aliados__logo-wrap {
-  background-color: #ffffff;
-  border-radius: var(--radius-sm);
-  height: 82px;
-  padding: 0.75rem;
+  padding: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: grayscale(1);
+  opacity: 0.7;
+  transition: filter var(--dur-ui) ease, opacity var(--dur-ui) ease,
+    transform var(--dur-ui) var(--ease-decel), box-shadow var(--dur-ui) ease, border-color var(--dur-ui) ease;
+}
+
+.aliados__item:hover,
+.aliados__item:focus-within {
+  filter: grayscale(0);
+  opacity: 1;
+  transform: translateY(-4px);
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-md);
 }
 
 .aliados__logo {
@@ -981,119 +986,6 @@ h1, h2, h3, h4 {
   width: auto;
   height: auto;
   object-fit: contain;
-  filter: grayscale(0.15);
-  opacity: 0.92;
-  transition: filter var(--dur-ui) ease, opacity var(--dur-ui) ease, transform var(--dur-ui) ease;
-}
-
-.aliados__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.1rem;
-}
-
-.aliados__acronym {
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--color-paper);
-}
-
-.aliados__role {
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-}
-
-.aliados__item:hover,
-.aliados__item:focus-visible {
-  transform: translateY(-5px);
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-md);
-}
-
-.aliados__item:hover .aliados__logo,
-.aliados__item:focus-visible .aliados__logo {
-  filter: grayscale(0);
-  opacity: 1;
-  transform: scale(1.04);
-}
-
-/* Nivel 2: Directorio de la Red de Entes Adscritos al MINCYT */
-.aliados__directory {
-  border-top: 1px solid var(--color-line);
-  padding-top: var(--space-lg);
-}
-
-.aliados__directory-title {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  text-align: center;
-  margin-bottom: var(--space-md);
-}
-
-.aliados__network {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.85rem;
-}
-
-.ente-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
-  padding: 1rem 1.15rem;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--transition-base), transform var(--transition-base),
-    background-color var(--transition-base);
-}
-
-.ente-card:hover,
-.ente-card:focus-visible {
-  border-color: var(--color-line-strong);
-  background-color: var(--color-surface-2);
-  transform: translateY(-2px);
-}
-
-.ente-card__badge {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--color-accent-hover);
-  background-color: var(--color-accent-dim);
-  border: 1px solid rgba(212, 24, 30, 0.25);
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  flex-shrink: 0;
-  min-width: 78px;
-  text-align: center;
-}
-
-.ente-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.ente-card__name {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--color-paper);
-  line-height: 1.3;
-}
-
-.ente-card__scope {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
 }
 
 /* ---------- 14. NOTICIAS ---------- */
@@ -1353,11 +1245,22 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================================
-   17. MEDIA QUERIES — Mobile-first
+   15. MEDIA QUERIES — Mobile-first
    ============================================================ */
 
-/* Tablet (768px en adelante) */
+/* Tablet (>= 768px) */
 @media (min-width: 768px) {
+  .hero__bg {
+    background-position: center 32%;
+  }
+
+  /* Velo direccional: oscuro solo bajo el texto (izquierda) y casi nulo sobre la
+     persona (derecha), que así se ve a color; abajo se funde con la sección siguiente. */
+  .hero__wash {
+    background: linear-gradient(180deg, rgba(10, 10, 13, 0) 55%, #0a0a0d 100%),
+      linear-gradient(90deg, rgba(10, 10, 13, 0.78) 0%, rgba(10, 10, 13, 0.6) 40%, rgba(10, 10, 13, 0.08) 62%, rgba(10, 10, 13, 0) 100%);
+  }
+
   .stats__container {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -1378,10 +1281,6 @@ h1, h2, h3, h4 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .aliados__network {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .noticia {
     flex: 0 0 calc(50% - (var(--space-md) / 2));
   }
@@ -1391,7 +1290,7 @@ h1, h2, h3, h4 {
   }
 }
 
-/* Desktop (1024px en adelante) */
+/* Desktop (>= 1024px) */
 @media (min-width: 1024px) {
   .header__toggle {
     display: none;
@@ -1535,14 +1434,6 @@ h1, h2, h3, h4 {
   .tile--geomatica { grid-area: geomatica; }
   .tile--sistemas { grid-area: sistemas; }
   .tile--labmeb { grid-area: labmeb; }
-
-  .aliados__grid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-
-  .aliados__network {
-    grid-template-columns: repeat(3, 1fr);
-  }
 
   .noticia {
     flex: 0 0 calc(33.333% - (var(--space-md) * 2 / 3));
